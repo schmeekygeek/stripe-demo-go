@@ -1,23 +1,33 @@
 package main
 
 import (
-  "log"
-  "os"
+	"net/http"
 
-  "github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
+	stripe "github.com/stripe/stripe-go/v72"
+	"github.com/stripe/stripe-go/v72/paymentintent"
 )
 
-type Server struct {
-  secretKey   string
+type CreateIntentResponse struct {
+  ClientSecret string `json:"client_secret"`
 }
 
-func (s *Server) Init() {
-  err := godotenv.Load()
+func CreateIntent(c echo.Context) error {
+  params := &stripe.PaymentIntentParams{
+    Amount: stripe.Int64(1099),
+    Currency: stripe.String(string(stripe.CurrencyUSD)),
+  };
+  result, err := paymentintent.New(params);
   if err != nil {
-    log.Fatal("Error loading .env file")
+    return err
   }
+  return c.JSON(
+    http.StatusOK,
+    CreateIntentResponse{ ClientSecret: result.ClientSecret },
+  )
+}
 
-  s.secretKey = os.Getenv("SECRET_KEY")
-
-  log.Println(s.secretKey)
+func ListIntents(c echo.Context) error {
+  iter := paymentintent.List(&stripe.PaymentIntentListParams{ })
+  return c.JSON(200, iter.List())
 }
