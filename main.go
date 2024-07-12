@@ -16,9 +16,10 @@ func main() {
   }
 
   stripe.Key = os.Getenv("SECRET_KEY")
-  log.Println(stripe.Key)
   e := echo.New()
   e.GET("/", CreateIntent)
   e.GET("/list", ListIntents)
+  e.GET("/capture/:id", CaptureIntent)
+  e.GET("/refund/:id", RefundIntent)
   e.Logger.Fatal(e.Start(":8080"))
 }
