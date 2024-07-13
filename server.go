@@ -16,8 +16,8 @@ type CreateIntentResponse struct {
 
 func CreateIntent(c echo.Context) error {
   params := &stripe.PaymentIntentParams{
-    Amount: stripe.Int64(1099),
-    Currency: stripe.String(string(stripe.CurrencyUSD)),
+    Amount: stripe.Int64(500),
+    Currency: stripe.String(string(stripe.CurrencyINR)),
   };
   result, err := paymentintent.New(params);
   if err != nil {
